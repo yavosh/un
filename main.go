@@ -65,9 +65,8 @@ func main() {
 	epk := color.New(color.FgCyan, color.Faint)
 	epv := color.New(color.FgWhite, color.Faint)
 
-	message := make(map[string]interface{})
-
 	for scanner.Scan() {
+		message := make(map[string]interface{})
 		err := json.Unmarshal([]byte(scanner.Text()), &message)
 		if err != nil {
 			// if we can't parse just print it
