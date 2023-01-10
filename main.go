@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/fatih/color"
 	"os"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type flushable interface {
@@ -15,16 +17,20 @@ type flushable interface {
 }
 
 func flusher(w flushable, d time.Duration) {
-	t := time.NewTicker(time.Second * 1)
+	t := time.NewTicker(d)
 	for range t.C {
 		_ = w.Flush()
 	}
 }
 
 func ts(t string) string {
+	if ux, err := strconv.ParseInt(t, 10, 64); err == nil {
+		return time.UnixMilli(ux).Format("15:04:05")
+	}
+
 	tt, err := time.Parse(time.RFC3339Nano, t)
 	if err != nil {
-		return "err"
+		return "ts err"
 	}
 
 	return tt.Format("15:04:05")
@@ -49,7 +55,9 @@ func level(l string) *color.Color {
 func main() {
 	skip := map[string]bool{
 		"logger":    true,
+		"level":     true,
 		"timestamp": true,
+		"time":      true,
 		"severity":  true,
 	}
 
@@ -81,8 +89,19 @@ func main() {
 			_, _ = fp.Fprintf(w, "] ")
 		}
 
+		if v, ok := message["level"]; ok {
+			lp := level(fmt.Sprintf("%s", v))
+			_, _ = fp.Fprintf(w, "[")
+			_, _ = lp.Fprintf(w, "%5s", v)
+			_, _ = fp.Fprintf(w, "] ")
+		}
+
 		if v, ok := message["timestamp"]; ok {
 			_, _ = fp.Fprintf(w, "%s ", ts(fmt.Sprintf("%s", v)))
+		}
+
+		if v, ok := message["time"]; ok {
+			_, _ = fp.Fprintf(w, "%s ", ts(fmt.Sprintf("%.0f", v)))
 		}
 
 		if v, ok := message["logger"]; ok {
