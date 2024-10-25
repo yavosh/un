@@ -36,6 +36,8 @@ var (
 		"timestamp": true,
 		"time":      true,
 		"severity":  true,
+		"msg":       true,
+		"message":   true,
 	}
 )
 
@@ -104,6 +106,10 @@ func format(line string, w io.Writer) {
 	}
 
 	if v, ok := message["message"]; ok {
+		_, _ = mp.Fprintf(w, "%s ", v)
+	}
+
+	if v, ok := message["msg"]; ok {
 		_, _ = mp.Fprintf(w, "%s ", v)
 	}
 
