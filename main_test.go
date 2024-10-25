@@ -5,8 +5,29 @@ import (
 )
 
 func TestTime(t *testing.T) {
-	res := ts("1673349503212")
-	if want, got := "13:18:23", res; want != got {
-		t.Errorf("erro parsing timestamp: want %q got %q", want, got)
+	testCases := []struct {
+		name string
+		time string
+		want string
+	}{
+		{
+			name: "int",
+			time: "1673349503212",
+			want: "13:18:23",
+		},
+		{
+			name: "iso",
+			time: "2024-10-25T10:38:43.047213+03:00",
+			want: "10:38:43",
+		},
+	}
+
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ts(tt.time)
+			if tt.want != got {
+				t.Errorf("error parsing timestamp: ts: %q want %q got %q", tt.time, tt.want, got)
+			}
+		})
 	}
 }
