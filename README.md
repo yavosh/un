@@ -1,10 +1,6 @@
-# un will [un]structure your structured json logs
+# un, [un]structure your structured json logs
 
 Parse json logs and make them pretty in the console
-
-## Intro
-
-Un will help you view your structured json logs in a terminal
 
 ## Install
 
